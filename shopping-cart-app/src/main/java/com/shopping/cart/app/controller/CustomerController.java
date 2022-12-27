@@ -16,74 +16,74 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shopping.cart.app.exception.CustomerNotFoundException;
 import com.shopping.cart.app.model.Customer;
-import com.shopping.cart.app.repository.CustomerRepository;
+import com.shopping.cart.app.service.CustomerService;
 
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
 
 	@Autowired
-	private CustomerRepository customerRepository;
+	private CustomerService customerService;
 	
 	@PostMapping("/create")
 	public Customer createCustomer(@RequestBody Customer customer) {
-        return customerRepository.save(customer);
+        return customerService.save(customer);
     }
 	@GetMapping
 	public List<Customer> getAllcustomer(){
-		return customerRepository.findAll();
+		return customerService.findAll();
 	}
 
 	@GetMapping("/{firstName}/{lastName}")
 	public List<Customer> findByContactFirstNameAndContactLastName(@PathVariable String firstName,@PathVariable String lastName){
-		return customerRepository.findByContactFirstNameAndContactLastName(firstName, lastName);
+		return customerService.findByContactFirstNameAndContactLastName(firstName, lastName);
 	}
 	
 	@GetMapping("/cityandstate{firstName}/{lastName}")
 	public List<Customer> findByCityAndState(@PathVariable String city,@PathVariable String state){
-		return customerRepository.findByCityAndState(city, state);
+		return customerService.findByCityAndState(city, state);
 	}
 	
 	@GetMapping("/{phone}")
 	public List<Customer> findByPhoneNumber(@PathVariable String phone){
-		return customerRepository.findByPhoneNumber(phone);
+		return customerService.findByPhoneNumber(phone);
 	}
 	
 	@GetMapping("/descending")
 	public List<Customer> findAllCustomerOrderByCreditLimit(){
-		return customerRepository.findAllCustomerOrderByCreditLimit();
+		return customerService.findAllCustomerOrderByCreditLimit();
 	}
 	
 	@GetMapping("/lessthan/{creditLimit}")
 	public List<Customer> findByCreditLimitLessThan(@PathVariable double creditLimit){
-		return customerRepository.findByCreditLimitLessThan(creditLimit);
+		return customerService.findByCreditLimitLessThan(creditLimit);
 	}
 	
 	@GetMapping("/greaterthan/{creditLimit}")
 	public List<Customer> findByCreditLimitGreaterThan(@PathVariable double creditLimit){
-		return customerRepository.findByCreditLimitGreaterThan(creditLimit);
+		return customerService.findByCreditLimitGreaterThan(creditLimit);
 	}
 	
 	@GetMapping("/{name}")
 	public List<Customer> findByCustomerNameStartingWith(@PathVariable String name){
-		return customerRepository.findByCustomerNameStartingWith(name);
+		return customerService.findByCustomerNameStartingWith(name);
 	}
 	
 	@GetMapping("/contains/{name}")
 	public List<Customer> findByCustomerNameContains(@PathVariable String name){
-		return customerRepository.findByCustomerNameContains(name);
+		return customerService.findByCustomerNameContains(name);
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Customer> getCustomerById(@PathVariable  long id) throws CustomerNotFoundException {
-		Customer customer = customerRepository.findById(id)
+		Customer customer = customerService.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("customer not exist with id: " + id));
         return ResponseEntity.ok(customer);
 	}
 	
 	@PutMapping("/{id}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable long id,@RequestBody Customer customer) throws CustomerNotFoundException {
-		Customer updateCustomer = customerRepository.findById(id)
+		Customer updateCustomer = customerService.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("customer not exist with id: " + id));
 		
 		updateCustomer.setCustomerName(customer.getCustomerName());
@@ -100,7 +100,7 @@ public class CustomerController {
 		updateCustomer.setCreditLimit(customer.getCreditLimit());
 		
 		
-		customerRepository.save(updateCustomer);
+		customerService.save(updateCustomer);
 
         return ResponseEntity.ok(updateCustomer);
     }
@@ -108,10 +108,10 @@ public class CustomerController {
 	@DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCustomer(@PathVariable long id) throws CustomerNotFoundException{
 
-		Customer customer = customerRepository.findById(id)
+		Customer customer = customerService.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not exist with id: " + id));
 
-        customerRepository.delete(customer);
+        customerService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
 

@@ -14,74 +14,72 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shopping.cart.app.exception.ResourceNotFoundException;
+import com.shopping.cart.app.exception.ProductNotFoundException;
 import com.shopping.cart.app.model.Product;
-import com.shopping.cart.app.repository.ProductRepository;
+import com.shopping.cart.app.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {	
 
 	@Autowired
-	private ProductRepository productRepository; 
+	private ProductService productService;
 
+	//Create Product
 	@PostMapping("/create")
     public Product createProduct(@RequestBody Product product) {
-        return productRepository.save(product);
+        return productService.create(product);
     }
+	
+	//Get All Product
 	@GetMapping
 	public List<Product> getAllProduct(){
-		return productRepository.findAll();
+		return productService.findAll();
 	}
-//	@GetMapping
-//	public ResponseEntity< List<Product>> getAllProduct(){
-//		List<Product> products = productRepository.findAll();
-//			
-//		return ResponseEntity.ok(products);
-//	}
 	
+	//Get All Product By Product Name And BuyPrice
 	@GetMapping("/{productName}/{buyPrice}")
 	public List<Product> getAllProductByProductNameAndBuyPrice(@PathVariable String productName,@PathVariable double buyPrice){
-		return productRepository.findAllByProductNameAndBuyPrice(productName, buyPrice);
+		return productService.findAllByProductNameAndBuyPrice(productName, buyPrice);
 	}
 	
 	//find products by ByPrice decending order
 	@GetMapping("/buyprice")
 	public List<Product> findProductOrderByBuyPrice(){	
-		return productRepository.findAllOrderByBuyPrice();
+		return productService.findAllOrderByBuyPrice();
 	}
 	
 	@GetMapping("/priceless/{price}")
 	public List<Product> findByPriceLessThan(@PathVariable double price){	
-		return productRepository.findByPriceLessThan(price);
+		return productService.findByPriceLessThan(price);
 	}
 	
 	@GetMapping("/pricegreater/{price}")
 	public List<Product> findByPriceGreaterThan(@PathVariable double price){	
-		return productRepository.findByPriceGreaterThan(price);
+		return productService.findByPriceGreaterThan(price);
 	}
 	
 	@GetMapping("/namestartwith/{prefix}")
 	public List<Product> findByNameStartingWith(@PathVariable String prefix){	
-		return productRepository.findByNameStartingWith(prefix);
+		return productService.findByNameStartingWith(prefix);
 	}
 	
 	@GetMapping("/namelike/{name}")
 	public List<Product> findByNameLike(@PathVariable String name){	
-		return productRepository.findByNameLike(name);
+		return productService.findByNameLike(name);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Product> getProductById(@PathVariable  long id) throws ResourceNotFoundException {
-		Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not exist with id: " + id));
+	public ResponseEntity<Product> getProductById(@PathVariable  long id) throws ProductNotFoundException {
+		Product product = productService.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not exist with id: " + id));
         return ResponseEntity.ok(product);
 	}
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable long id,@RequestBody Product product) throws ResourceNotFoundException {
-		Product updateProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not exist with id: " + id));
+    public ResponseEntity<Product> updateProduct(@PathVariable long id,@RequestBody Product product) throws ProductNotFoundException {
+		Product updateProduct = productService.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not exist with id: " + id));
 		
 		updateProduct.setProductName(product.getProductName());
 		updateProduct.setProductScale(product.getProductScale());
@@ -91,21 +89,21 @@ public class ProductController {
 		updateProduct.setBuyPrice(product.getBuyPrice());
 		updateProduct.setMSRP(product.getMSRP());        
 
-        productRepository.save(updateProduct);
+        productService.create(updateProduct);
 
         return ResponseEntity.ok(updateProduct);
     }
 
-	@DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteProduct(@PathVariable long id) throws ResourceNotFoundException{
-
-		Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not exist with id: " + id));
-
-        productRepository.delete(product);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-
-    }
+	@DeleteMapping("{id}")
+	public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
+		
+		productService.findById(id)
+		.orElseThrow(() -> new ProductNotFoundException("Product not exist with id:" + id));
+		
+		productService.deleteProduct(id);
+		
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		
+	}
 
 }

@@ -152,5 +152,6 @@ public class Product {
 				+ productDescription + ", quantityInStock=" + quantityInStock + ", buyPrice=" + buyPrice + ", MSRP="
 				+ MSRP + "]";
 	}
-		
+	
 }
+

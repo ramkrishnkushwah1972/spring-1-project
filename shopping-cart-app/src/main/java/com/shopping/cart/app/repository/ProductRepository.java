@@ -20,9 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query("from Product order by buyPrice desc")
 	List<Product> findAllOrderByBuyPrice();
 	
-//	@Query(value="select * from Product p where p.buyPrice<:buyPrice", nativeQuery=true)
-//	List<Product> findByPriceLessThan(double buyPrice);
-	
 	@Query("select p from Product p where p.buyPrice < ?1")
 	List<Product> findByPriceLessThan(double buyPrice);
 	

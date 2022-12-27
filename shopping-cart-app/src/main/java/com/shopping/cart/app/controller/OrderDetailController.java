@@ -16,23 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shopping.cart.app.exception.ResourceNotFoundException;
 import com.shopping.cart.app.model.OrderDetail;
-import com.shopping.cart.app.repository.OrderDetailRepository;
+import com.shopping.cart.app.service.OrderDetailService;
 
 @RestController
 @RequestMapping("/api/orderdetails")
 public class OrderDetailController {
 
 	@Autowired
-	private OrderDetailRepository orderDetailRepository;
+	private OrderDetailService orderDetailService;
 
 	@PostMapping("/create")
 	public OrderDetail createOrderDetail(@RequestBody OrderDetail orderDetail) {
-		return orderDetailRepository.save(orderDetail);
+		return orderDetailService.save(orderDetail);
 	}
 
 	@GetMapping
 	public List<OrderDetail> getAllOrderDetail() {
-		return orderDetailRepository.findAll();
+		return orderDetailService.findAll();
 	}
 
 	// Find By ProductCode And QuantityOrdered(long productCode, int
@@ -40,47 +40,47 @@ public class OrderDetailController {
 	@GetMapping("/{productCode}/{quantityOrdered}")
 	public List<OrderDetail> findByProductCodeAndQuantityOrdered(@PathVariable long pc, @PathVariable int q) {
 
-		return orderDetailRepository.findByProductCodeAndQuantityOrdered(pc, q);
+		return orderDetailService.findByProductCodeAndQuantityOrdered(pc, q);
 	}
 
 	// Find By PriceEach  
 	@GetMapping("/{priceEach}")
 	public List<OrderDetail> findByPriceEach(@PathVariable long priceEach) {
 
-		return orderDetailRepository.findByPriceEach(priceEach);
+		return orderDetailService.findByPriceEach(priceEach);
 	}
 
 	// Find All OrderDetail OrderBy PriceEach  
 	@GetMapping("/orderbyprice")
 	public List<OrderDetail> findAllOrderDetailOrderByPriceEach() {
 
-		return orderDetailRepository.findAllOrderDetailOrderByPriceEach();
+		return orderDetailService.findAllOrderDetailOrderByPriceEach();
 	}
 	
 	// Find By QuantityOrdered LessThan
 	@GetMapping("/lessthan/{quantity}")
 	public List<OrderDetail> findByQuantityOrderedLessThan(@PathVariable int quantityOrdered) {
 
-		return orderDetailRepository.findByQuantityOrderedLessThan(quantityOrdered);
+		return orderDetailService.findByQuantityOrderedLessThan(quantityOrdered);
 	}
 	
 	// List<OrderDetail> findByQuantityOrderedGreaterThan(int quantityOrdered);
 	@GetMapping("/greaterthan/{quantity}")
 	public List<OrderDetail> findByQuantityOrderedGreaterThan(@PathVariable int quantityOrdered) {
 
-		return orderDetailRepository.findByQuantityOrderedGreaterThan(quantityOrdered);
+		return orderDetailService.findByQuantityOrderedGreaterThan(quantityOrdered);
 	}
 	
 	// List<OrderDetail> findByOrderLineNumber(int orderLineNumber);
 	@GetMapping("/orderline/{orderLineNumber}")
 	public List<OrderDetail> findByOrderLineNumber(@PathVariable int orderLineNumber) {
 
-		return orderDetailRepository.findByOrderLineNumber(orderLineNumber);
+		return orderDetailService.findByOrderLineNumber(orderLineNumber);
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<OrderDetail> getOrderDetailById(@PathVariable long id) throws ResourceNotFoundException {
-		OrderDetail orderDetail = orderDetailRepository.findById(id)
+		OrderDetail orderDetail = orderDetailService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("OrderDetail not exist with id: " + id));
 		return ResponseEntity.ok(orderDetail);
 	}
@@ -88,14 +88,14 @@ public class OrderDetailController {
 	@PutMapping("/{id}")
 	public ResponseEntity<OrderDetail> updateOrderDetail(@PathVariable long id, @RequestBody OrderDetail orderDetail)
 			throws ResourceNotFoundException {
-		OrderDetail updateOrderDetail = orderDetailRepository.findById(id)
+		OrderDetail updateOrderDetail = orderDetailService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("OrderDetail not exist with id: " + id));
 
 		updateOrderDetail.setQuantityOrdered(orderDetail.getQuantityOrdered());
 		updateOrderDetail.setPriceEach(orderDetail.getPriceEach());
 		updateOrderDetail.setOrderLineNumber(orderDetail.getOrderLineNumber());
 
-		orderDetailRepository.save(updateOrderDetail);
+		orderDetailService.save(updateOrderDetail);
 
 		return ResponseEntity.ok(updateOrderDetail);
 	}
@@ -103,10 +103,10 @@ public class OrderDetailController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<HttpStatus> deleteOrderDetail(@PathVariable long id) throws ResourceNotFoundException {
 
-		OrderDetail orderDetail = orderDetailRepository.findById(id)
+		OrderDetail orderDetail = orderDetailService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("OrderDetail not exist with id: " + id));
 
-		orderDetailRepository.delete(orderDetail);
+		orderDetailService.delete(id);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 

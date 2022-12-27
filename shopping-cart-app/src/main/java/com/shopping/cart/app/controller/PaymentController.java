@@ -17,58 +17,58 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shopping.cart.app.exception.ResourceNotFoundException;
 import com.shopping.cart.app.model.Payment;
-import com.shopping.cart.app.repository.PaymentRepository;
+import com.shopping.cart.app.service.PaymentService;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
 
 	@Autowired
-	private PaymentRepository paymentRepository;
+	private PaymentService paymentService;
 
 	@PostMapping("/create")
 	public Payment createPayment(@RequestBody Payment payment) {
-		return paymentRepository.save(payment);
+		return paymentService.save(payment);
 	}
 
 	@GetMapping
 	public List<Payment> getAllPayment() {
-		return paymentRepository.findAll();
+		return paymentService.findAll();
 	}
 
 	// Find Payment By Customer Number
 	@GetMapping("/customernumber/{customerNumber}")
 	public List<Payment> findByCustomerNumber(@PathVariable long customerNumber) {
-		return paymentRepository.findByCustomerNumber(customerNumber);
+		return paymentService.findByCustomerNumber(customerNumber);
 	}
 
 	// Find All Payment By Amount in descending order
 	@GetMapping("/descending")
 	public List<Payment> findAllPaymentByAmount() {
-		return paymentRepository.findAllPaymentByAmount();
+		return paymentService.findAllPaymentByAmount();
 	}
 
 	// Find Payment By Payment Date
 	@GetMapping("/bydate/{localDate}")
 	public List<Payment> findByPaymentDate(@PathVariable LocalDate localDate) {
-		return paymentRepository.findByPaymentDate(localDate);
+		return paymentService.findByPaymentDate(localDate);
 	}
 
 	// Find By Amount Less Than
 	@GetMapping("/lessthan/{amount}")
 	public List<Payment> findByAmountLessThan(@PathVariable double amount) {
-		return paymentRepository.findByAmountLessThan(amount);
+		return paymentService.findByAmountLessThan(amount);
 	}
 
 	// Find By Amount Greater Than
 	@GetMapping("/greaterthan/{amount}")
 	public List<Payment> findByAmountGreaterThan(@PathVariable double amount) {
-		return paymentRepository.findByAmountGreaterThan(amount);
+		return paymentService.findByAmountGreaterThan(amount);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Payment> getPaymentById(@PathVariable long id) throws ResourceNotFoundException {
-		Payment payment = paymentRepository.findById(id)
+		Payment payment = paymentService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Payment not exist with id: " + id));
 		return ResponseEntity.ok(payment);
 	}
@@ -76,13 +76,13 @@ public class PaymentController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Payment> updatePayment(@PathVariable long id, @RequestBody Payment payment)
 			throws ResourceNotFoundException {
-		Payment updatePayment = paymentRepository.findById(id)
+		Payment updatePayment = paymentService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Payment not exist with id: " + id));
 
 		updatePayment.setPaymentLocalDate(payment.getPaymentLocalDate());
 		updatePayment.setAmount(payment.getAmount());
 
-		paymentRepository.save(updatePayment);
+		paymentService.save(updatePayment);
 
 		return ResponseEntity.ok(updatePayment);
 	}
@@ -90,10 +90,10 @@ public class PaymentController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<HttpStatus> deletePayment(@PathVariable long id) throws ResourceNotFoundException {
 
-		Payment payment = paymentRepository.findById(id)
+		Payment payment = paymentService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Payment not exist with id: " + id));
 
-		paymentRepository.delete(payment);
+		paymentService.delete(id);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 

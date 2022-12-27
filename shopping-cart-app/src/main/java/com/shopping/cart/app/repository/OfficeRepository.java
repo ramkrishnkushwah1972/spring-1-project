@@ -30,5 +30,4 @@ public interface OfficeRepository extends JpaRepository<Office, Long>{
 	@Query("SELECT o FROM Office o WHERE o.city LIKE ?1")
 	List<Office> findByCityStartingWith(String city);
 	
-	
 }

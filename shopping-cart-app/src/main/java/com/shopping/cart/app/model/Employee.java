@@ -20,7 +20,7 @@ public class Employee {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="employee_number")
-	private long orderNumber;
+	private long employeeNumber;
 	
 	@Column(name="last_name")
 	private String lastName;
@@ -54,9 +54,9 @@ public class Employee {
 		super();
 	}
 
-	public Employee(long orderNumber, String lastName, String firstName, String extension, String email,
+	public Employee(long employeeNumber, String lastName, String firstName, String extension, String email,
 			Office office, String reportTo, String jobTitle, List<Customer> customers, List<Employee> employees) {
-		this.orderNumber = orderNumber;
+		this.employeeNumber = employeeNumber;
 		this.lastName = lastName;
 		this.firstName = firstName;
 		this.extension = extension;
@@ -81,12 +81,12 @@ public class Employee {
 		this.employees = employees;
 	}
 
-	public long getOrderNumber() {
-		return orderNumber;
+	public long getEmployeeNumber() {
+		return employeeNumber;
 	}
 
-	public void setOrderNumber(long orderNumber) {
-		this.orderNumber = orderNumber;
+	public void setEmployeeNumber(long employeeNumber) {
+		this.employeeNumber = employeeNumber;
 	}
 
 	public String getLastName() {
@@ -163,7 +163,7 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [orderNumber=" + orderNumber + ", lastName=" + lastName + ", firstName=" + firstName
+		return "Employee [employeeNumber=" + employeeNumber + ", lastName=" + lastName + ", firstName=" + firstName
 				+ ", extension=" + extension + ", email=" + email + ", office=" + office + ", reportTo="
 				+ reportTo + ", jobTitle=" + jobTitle + ", customers=" + customers + ", employees=" + employees + "]";
 	}

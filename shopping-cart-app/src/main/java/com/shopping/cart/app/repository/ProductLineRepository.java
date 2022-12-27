@@ -14,10 +14,6 @@ import com.shopping.cart.app.model.ProductLine;
 @Repository
 public interface ProductLineRepository extends JpaRepository<ProductLine, Long> {
 
-//	@Query(value = "select *from ProductLine",nativeQuery = true)
-//	public List<ProductLine> getProductLines();
-	
-
 	@Query("from ProductLine where textDescription = ?1 and htmlDescription = ?2")
 	List<ProductLine> findAllByTextDescriptionAndHtmlDescription(String textDescription, String htmlDescription);
 	
